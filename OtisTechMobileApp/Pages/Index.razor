@@ -1,17 +1,54 @@
 ﻿@page "/"
+@using Newtonsoft.Json;
+@using OtisTechMobileApp.Models;
+@inject IApiService apiService;
 
 <h1>Otis TechApp</h1>
-<h2>Current active errands:</h2>
 
-<MudText>@Text</MudText>
+<MudText>Current active errands:</MudText>
 
 
+@*tabell!!!
+
+endast hissar med aktiva errands!
+länkar till separat lista med errands
+visa vem som är listad som ansvarig för ärendet
+
+
+*@
+
+<MudTable T="elevators" Items="elevs">
+    <HeaderContent>
+        <MudTh>Id</MudTh>
+        <MudTh>Location</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Id">@context.Id</MudTd>
+        <MudTd DataLabel="Location">@context.Location</MudTd>
+
+    </RowTemplate>
+</MudTable>
+
+<MudButton OnClick="LoadData">Ladda data</MudButton>
 
 @code{
-    public string Text = "korv";
 
+    public ErrandView errandView { get; set; }
 
+    public List<elevators> elevs { get; set; } = new List<elevators>();
+    public class elevators
+    {
+        public Guid Id { get; set; }
+        public string Location { get; set; }
+    }
 
+    protected override async Task OnInitializedAsync()
+    {
+        elevs = JsonConvert.DeserializeObject<List<elevators>>(await apiService.GetAsync("Elevators/GetElevators"));
+    }
 
-
+    public async Task LoadData()
+    {
+        elevs = JsonConvert.DeserializeObject<List<elevators>>(await apiService.GetAsync("Elevators/GetElevators"));
+    }
 }

@@ -14,6 +14,7 @@ namespace OtisTechMobileApp.Models
         public bool Active { get; set; }
         public string Status { get; set; }
 
+        public string ActiveTechId { get; set; } = null!;
 
     }
 }

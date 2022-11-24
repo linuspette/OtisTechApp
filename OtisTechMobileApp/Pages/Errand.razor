@@ -1,0 +1,20 @@
+﻿@using OtisTechMobileApp.Models;
+<h3>Errand</h3>
+
+<MudText>Errand ID: @errand.Id</MudText>
+<MudText>Elevator ID: @errand.ElevatorId</MudText>
+<MudText>Errand text: @errand.ErrandText</MudText>
+<MudText>Active errand: @errand.Active</MudText>
+<MudText>Active tech ID: @errand.ActiveTechId</MudText>
+
+<MudText>@comment</MudText>
+
+
+@code {
+    public ErrandView errand { get; set; }
+
+    public string comment { get; set; }
+
+
+
+}

@@ -1,4 +1,5 @@
 ﻿using MudBlazor.Services;
+using OtisTechMobileApp.Services;
 
 namespace OtisTechMobileApp
 {
@@ -13,6 +14,8 @@ namespace OtisTechMobileApp
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 });
+
+            builder.Services.AddScoped<IApiService, ApiService>();
 
             builder.Services.AddMauiBlazorWebView();
 #if DEBUG
