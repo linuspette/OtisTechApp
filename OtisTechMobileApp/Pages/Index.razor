@@ -13,11 +13,13 @@
 endast hissar med aktiva errands!
 länkar till separat lista med errands
 visa vem som är listad som ansvarig för ärendet
+lista ärenden, ta in prop för errand lista till varje hiss.
+ta in lista på techs - dropdown på varje ärende
 
 
 *@
 
-<MudTable T="elevators" Items="elevs">
+<MudTable T="Elevators" Items="elevs">
     <HeaderContent>
         <MudTh>Id</MudTh>
         <MudTh>Location</MudTh>
@@ -35,8 +37,8 @@ visa vem som är listad som ansvarig för ärendet
 
     public ErrandView errandView { get; set; }
 
-    public List<elevators> elevs { get; set; } = new List<elevators>();
-    public class elevators
+    public List<Elevators> elevs { get; set; } = new List<Elevators>();
+    public class Elevators
     {
         public Guid Id { get; set; }
         public string Location { get; set; }
@@ -44,11 +46,11 @@ visa vem som är listad som ansvarig för ärendet
 
     protected override async Task OnInitializedAsync()
     {
-        elevs = JsonConvert.DeserializeObject<List<elevators>>(await apiService.GetAsync("Elevators/GetElevators"));
+        elevs = JsonConvert.DeserializeObject<List<Elevators>>(await apiService.GetAsync("Elevators/GetElevators"));
     }
 
     public async Task LoadData()
     {
-        elevs = JsonConvert.DeserializeObject<List<elevators>>(await apiService.GetAsync("Elevators/GetElevators"));
+        elevs = JsonConvert.DeserializeObject<List<Elevators>>(await apiService.GetAsync("Elevators/GetElevators"));
     }
 }
