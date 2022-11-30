@@ -11,6 +11,7 @@
         <SingleProject>true</SingleProject>
         <ImplicitUsings>enable</ImplicitUsings>
         <EnableDefaultCssItems>false</EnableDefaultCssItems>
+		<Nullable>enable</Nullable>
 
         <!-- Display name -->
         <ApplicationTitle>OtisTechMobileApp</ApplicationTitle>
@@ -47,6 +48,14 @@
 
         <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
         <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Models\ViewModels\Elevators\ElevatorView" />
+      <None Remove="Models\ViewModels\Elevators\NewFile1.txt" />
+      <None Remove="Models\ViewModels\Errands\NewFile1.txt" />
+      <None Remove="Models\ViewModels\Users\EmployeeView" />
+      <None Remove="Models\ViewModels\Users\NewFile1.txt" />
     </ItemGroup>
 
     <ItemGroup>

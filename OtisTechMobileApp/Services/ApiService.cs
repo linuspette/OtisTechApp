@@ -11,7 +11,7 @@ namespace OtisTechMobileApp.Services
 {
     public interface IApiService
     {
-        Task<string> GetAsync(string route);
+        Task<string> GetAsync(string route, IDictionary<string, string>? header);
         Task<string> PostAsync(string route, string data);
     }
 
@@ -24,11 +24,19 @@ namespace OtisTechMobileApp.Services
             _httpClient = new HttpClient();
         }
 
-        public async Task<string> GetAsync(string route)
+        public async Task<string> GetAsync(string apiCall, IDictionary<string, string>? header)
         {
             try
             {
-                var result = await _httpClient.GetAsync(baseAdress + route);
+                var request = new HttpRequestMessage(HttpMethod.Get, baseAdress + apiCall);
+                if (header != null)
+                {
+                    request.Headers.Add(header.Keys.First(), header.Values.First());
+                }
+
+
+                var result = await _httpClient.SendAsync(request) ?? null!;
+
                 return await result.Content.ReadAsStringAsync();
             }
             catch

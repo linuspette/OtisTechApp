@@ -1,26 +1,65 @@
-﻿@using OtisTechMobileApp.Models;
+﻿@using Newtonsoft.Json;
+@using OtisTechMobileApp.Models.InputModels;
+@using OtisTechMobileApp.Models.ViewModels.Errands;
+@inject IApiService apiService;
 @page "/Errand/{ErrandId}"
 @page "/Errand/"
 
 <h3>Errand</h3>
 
-<MudText>Errand ID: @errand.Id</MudText>
-<MudText>Elevator ID: @errand.ElevatorId</MudText>
-<MudText>Errand text: @errand.ErrandText</MudText>
-<MudText>Active errand: @errand.Active</MudText>
-<MudText>Active tech ID: @errand.ActiveTechId</MudText>
+<MudTable T="ErrandView" Items="errand">
+    <HeaderContent>
+        <MudTh>Errand Number</MudTh>
+        <MudTh>Elavator Id</MudTh>
+        <MudTh>Is Resolved</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Errand Number">@context.ErrandNumber</MudTd>
+        <MudTd DataLabel="Elevator Id">@context.Elevator.Id</MudTd>
+        <MudTd DataLabel="Is Resolved">@context.IsResolved</MudTd>
 
-<MudText>@comment</MudText>
+    </RowTemplate>
 
 
+</MudTable>
+
+
+<MudTextField @bind-Value="comment" Variant="Variant.Outlined"></MudTextField>
+
+
+
+<MudButton>Update with Comment</MudButton>
+
+<MudButton>Go back to list</MudButton>
 
 
 @code {
-    public ErrandView errand { get; set; }
+    public List<ErrandView> errand { get; set; } = new List<ErrandView>();
 
-    public string comment { get; set; }
+    public ErrandView errandOne { get; set; } = new ErrandView();
+
+    public ErrandInputModel errandInput { get; set; } = new ErrandInputModel();
+
+    public ErrandUpdateInputModel errandUpdateInput { get; set; } = new ErrandUpdateInputModel();
+
 
     [Parameter]
-    public Guid? ErrandId { get; set; }
+    public string? ErrandId { get; set; }
+
+    public string? comment { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var jsonObject = await apiService.GetAsync($"Errands/GetErrand", new Dictionary<string, string> { { "errandNumber", ErrandId! } });
+
+        errandOne = JsonConvert.DeserializeObject<ErrandView>(jsonObject) ?? null!;
+
+        errandInput.Title = errandOne.Title;
+        errandInput.ElevatorId = errandOne.Id;
+        errandInput.IsResolved = errandOne.IsResolved;
+
+        errand.Add(errandOne);
+    }
+
 
 }

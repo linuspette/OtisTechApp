@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using Newtonsoft.Json;
 @using OtisTechMobileApp.Models;
+@using OtisTechMobileApp.Models.ViewModels.Errands;
 @inject IApiService apiService;
 @inject NavigationManager navManager;
 
@@ -21,43 +22,58 @@ ta in lista på techs - dropdown på varje ärende
 
 *@
 
-<MudTable T="Elevators" Items="elevs">
+<MudTable T="ErrandView" Items="errands">
     <HeaderContent>
         <MudTh>Id</MudTh>
         <MudTh>Location</MudTh>
         <MudTh>Go to</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="Id">@context.Id</MudTd>
-        <MudTd DataLabel="Location">@context.Location</MudTd>
+        <MudTd DataLabel="Id">@context.ErrandNumber</MudTd>
+        <MudTd DataLabel="Location">@context.Title</MudTd>
         <MudTd DataLabel="Expand">
-            <MudLink Href="@($"Errand/{context.Id}")">Expand @context.Id</MudLink>
+            <MudButton OnClick="@(()=>RedirectToErrand(context.ErrandNumber))">
+                KNAPP
+            </MudButton>
         </MudTd>
     </RowTemplate>
 </MudTable>
 
-<MudButton OnClick="LoadData">Load data</MudButton>
+<MudButton OnClick="LoadData">Load data if not loaded</MudButton>
 
 @code{
 
-    public ErrandView errandView { get; set; }
+    public ErrandView? errandView { get; set; }
 
-    public List<Elevators> elevs { get; set; } = new List<Elevators>();
-    public class Elevators
-    {
-        public Guid Id { get; set; }
-        public string Location { get; set; }
-    }
+    public List<ErrandView> errands { get; set; } = new List<ErrandView>();
+
 
     protected override async Task OnInitializedAsync()
     {
-        elevs = JsonConvert.DeserializeObject<List<Elevators>>(await apiService.GetAsync("Elevators/GetElevators"));
+        await LoadData();
     }
 
     public async Task LoadData()
     {
-        elevs = JsonConvert.DeserializeObject<List<Elevators>>(await apiService.GetAsync("Elevators/GetElevators"));
+        errands = JsonConvert.DeserializeObject<List<ErrandView>>(await apiService.GetAsync("Errands/GetErrands", null))!;
     }
 
-    public void RedirecToErrand(string Id) => navManager.NavigateTo($"Errand/{Id}");
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {
+            await Timer_LoadDataAsync();
+        }
+    }
+    private async Task Timer_LoadDataAsync()
+    {
+        while(true)
+        {
+            await Task.Delay(10000);
+            await LoadData();
+            StateHasChanged();
+        }
+    }
+
+    public void RedirectToErrand(string Id) => navManager.NavigateTo($"/Errand/{Id}");
 }
