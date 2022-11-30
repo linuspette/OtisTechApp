@@ -1,6 +1,7 @@
 ﻿@using Newtonsoft.Json;
 @using OtisTechMobileApp.Models.InputModels;
 @using OtisTechMobileApp.Models.ViewModels.Errands;
+@using AutoMapper;
 @inject IApiService apiService;
 @page "/Errand/{ErrandId}"
 @page "/Errand/"
@@ -36,11 +37,13 @@
 @code {
     public List<ErrandView> errand { get; set; } = new List<ErrandView>();
 
-    public ErrandView errandOne { get; set; } = new ErrandView();
 
+
+    public ErrandView errandOne { get; set; } = new ErrandView();
+    public Mapper mapper = new Mapper();
     public ErrandInputModel errandInput { get; set; } = new ErrandInputModel();
 
-    public ErrandUpdateInputModel errandUpdateInput { get; set; } = new ErrandUpdateInputModel();
+    public bool isResolved { get; set; }
 
 
     [Parameter]
@@ -54,12 +57,24 @@
 
         errandOne = JsonConvert.DeserializeObject<ErrandView>(jsonObject) ?? null!;
 
-        errandInput.Title = errandOne.Title;
-        errandInput.ElevatorId = errandOne.Id;
-        errandInput.IsResolved = errandOne.IsResolved;
+        errandInput = mapper.Map<ErrandView>(ErrandInputModel);
+        
 
         errand.Add(errandOne);
     }
 
+    public async Task SaveErrand()
+    {
+        ErrandUpdateInputModel errandUpdateInput = new()
+        {
+            ErrandNumber = errandOne.ErrandNumber,
+            Status = errandInput.ErrandUpdates.Status,
+            IsResolved = isResolved,
+            Message = comment,
+            EmployeeIds = errandOne.AssignedTechnicians
+            
+            
+        };
+    }
 
 }
