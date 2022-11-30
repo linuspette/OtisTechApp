@@ -29,7 +29,7 @@
 
 
 
-<MudButton>Update with Comment</MudButton>
+<MudButton>Update/Save with Comment</MudButton>
 
 <MudButton>Go back to list</MudButton>
 
@@ -38,13 +38,13 @@
     public List<ErrandView> errand { get; set; } = new List<ErrandView>();
 
 
-
+    
     public ErrandView errandOne { get; set; } = new ErrandView();
-    public Mapper mapper = new Mapper();
+
     public ErrandInputModel errandInput { get; set; } = new ErrandInputModel();
 
     public bool isResolved { get; set; }
-
+    
 
     [Parameter]
     public string? ErrandId { get; set; }
@@ -57,24 +57,25 @@
 
         errandOne = JsonConvert.DeserializeObject<ErrandView>(jsonObject) ?? null!;
 
-        errandInput = mapper.Map<ErrandView>(ErrandInputModel);
+        var config = new MapperConfiguration(cfg => cfg.CreateMap<ErrandView, ErrandInputModel>().ReverseMap());
+        var mapper = config.CreateMapper();
+
+       var mappedInput = mapper.Map<ErrandInputModel, ErrandView>(errandInput);
         
 
         errand.Add(errandOne);
     }
 
-    public async Task SaveErrand()
-    {
-        ErrandUpdateInputModel errandUpdateInput = new()
-        {
-            ErrandNumber = errandOne.ErrandNumber,
-            Status = errandInput.ErrandUpdates.Status,
-            IsResolved = isResolved,
-            Message = comment,
-            EmployeeIds = errandOne.AssignedTechnicians
-            
-            
-        };
-    }
+    //public async Task SaveErrand()
+    //{
+    //    ErrandUpdateInputModel errandUpdateInput = new()
+    //    {
+    //        ErrandNumber = errandOne.ErrandNumber,
+    //        Status = errandInput.ErrandUpdates.Status,
+    //        IsResolved = isResolved,
+    //        Message = comment,
+     
+    //    };
+    //}
 
 }
