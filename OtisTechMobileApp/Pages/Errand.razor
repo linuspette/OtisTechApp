@@ -1,4 +1,7 @@
 ﻿@using OtisTechMobileApp.Models;
+@page "/Errand/{ErrandId}"
+@page "/Errand/"
+
 <h3>Errand</h3>
 
 <MudText>Errand ID: @errand.Id</MudText>
@@ -10,11 +13,14 @@
 <MudText>@comment</MudText>
 
 
+
+
 @code {
     public ErrandView errand { get; set; }
 
     public string comment { get; set; }
 
-
+    [Parameter]
+    public Guid? ErrandId { get; set; }
 
 }

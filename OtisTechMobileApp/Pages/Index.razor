@@ -2,6 +2,8 @@
 @using Newtonsoft.Json;
 @using OtisTechMobileApp.Models;
 @inject IApiService apiService;
+@inject NavigationManager navManager;
+
 
 <h1>Otis TechApp</h1>
 
@@ -23,15 +25,18 @@ ta in lista på techs - dropdown på varje ärende
     <HeaderContent>
         <MudTh>Id</MudTh>
         <MudTh>Location</MudTh>
+        <MudTh>Go to</MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Id">@context.Id</MudTd>
         <MudTd DataLabel="Location">@context.Location</MudTd>
-
+        <MudTd DataLabel="Expand">
+            <MudLink Href="@($"Errand/{context.Id}")">Expand @context.Id</MudLink>
+        </MudTd>
     </RowTemplate>
 </MudTable>
 
-<MudButton OnClick="LoadData">Ladda data</MudButton>
+<MudButton OnClick="LoadData">Load data</MudButton>
 
 @code{
 
@@ -53,4 +58,6 @@ ta in lista på techs - dropdown på varje ärende
     {
         elevs = JsonConvert.DeserializeObject<List<Elevators>>(await apiService.GetAsync("Elevators/GetElevators"));
     }
+
+    public void RedirecToErrand(string Id) => navManager.NavigateTo($"Errand/{Id}");
 }
