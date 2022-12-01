@@ -51,6 +51,10 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Content Remove="Pages\Index1.cshtml" />
+    </ItemGroup>
+
+    <ItemGroup>
       <None Remove="Models\ViewModels\Elevators\ElevatorView" />
       <None Remove="Models\ViewModels\Elevators\NewFile1.txt" />
       <None Remove="Models\ViewModels\Errands\NewFile1.txt" />

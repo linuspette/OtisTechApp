@@ -60,7 +60,7 @@
         var config = new MapperConfiguration(cfg => cfg.CreateMap<ErrandView, ErrandInputModel>().ReverseMap());
         var mapper = config.CreateMapper();
 
-       var mappedInput = mapper.Map<ErrandInputModel, ErrandView>(errandInput);
+        var mappedInput = mapper.Map<ErrandInputModel, ErrandView>(errandInput);
         
 
         errand.Add(errandOne);
