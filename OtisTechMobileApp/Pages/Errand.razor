@@ -30,7 +30,7 @@
 
 
 
-<MudButton>Update/Save with Comment</MudButton>
+<MudButton OnClick="SaveErrand">Update Errand</MudButton>
 
 <MudButton OnClick="GoBack">Go back to list</MudButton>
 
@@ -39,13 +39,15 @@
     public List<ErrandView> errand { get; set; } = new List<ErrandView>();
 
 
-    
+
     public ErrandView errandOne { get; set; } = new ErrandView();
 
-    public ErrandInputModel errandInput { get; set; } = new ErrandInputModel();
+    public ErrandInputModel errandInput { get; set; }
+
+    public ErrandUpdateInputModel errandUpdateInput { get; set; } = new();
 
     public bool isResolved { get; set; }
-    
+
 
     [Parameter]
     public string? ErrandId { get; set; }
@@ -58,27 +60,26 @@
 
         errandOne = JsonConvert.DeserializeObject<ErrandView>(jsonObject) ?? null!;
 
-        var config = new MapperConfiguration(cfg => cfg.CreateMap<ErrandView, ErrandInputModel>().ReverseMap());
-        var mapper = config.CreateMapper();
+        //var config = new MapperConfiguration(cfg => cfg.CreateMap<ErrandView, ErrandInputModel>().ReverseMap());
+        //var mapper = config.CreateMapper();
+        //var mappedInput = mapper.Map<ErrandView>(errandInput);
 
-        var mappedInput = mapper.Map<ErrandInputModel, ErrandView>(errandInput);
-        
 
         errand.Add(errandOne);
     }
-    
+
     public void GoBack() => navManager.NavigateTo($"/");
-    
-    //public async Task SaveErrand()
-    //{
-    //    ErrandUpdateInputModel errandUpdateInput = new()
-    //    {
-    //        ErrandNumber = errandOne.ErrandNumber,
-    //        Status = errandInput.ErrandUpdates.Status,
-    //        IsResolved = isResolved,
-    //        Message = comment,
-     
-    //    };
-    //}
+
+    public async Task SaveErrand()
+    {
+
+        errandUpdateInput.ErrandNumber = errandOne.ErrandNumber;
+        errandUpdateInput.IsResolved = isResolved;
+        errandUpdateInput.Message = comment;      
+
+        var jsonUpdate = JsonConvert.SerializeObject(errandUpdateInput);
+
+        await apiService.PostAsync("Errands/updateerrand", jsonUpdate);
+    }
 
 }
