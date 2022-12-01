@@ -1,0 +1,63 @@
+﻿@page "/Elevator/"
+@using Newtonsoft.Json;
+@using OtisTechMobileApp.Models.ViewModels.Elevators;
+@using OtisTechMobileApp.Models.ViewModels.Errands
+@inject IApiService apiService
+@inject NavigationManager navManager;
+
+
+<h1>Otis TechApp</h1>
+
+<MudText>Elevators</MudText>
+
+<MudTable T="ElevatorView" Items="elevators">
+    <HeaderContent>
+        <MudTh>Id</MudTh>
+        <MudTh>Location</MudTh>
+        <MudTh>Status</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Id">@context.Id</MudTd>
+        <MudTd DataLabel="Location">@context.Location</MudTd>
+        <MudTd></MudTd>
+    </RowTemplate>
+</MudTable>
+<MudButton OnClick="LoadData">Load data if not loaded</MudButton>
+<MudButton OnClick="@(()=>RedirectToIndex())">
+    Go Back
+</MudButton>
+
+@code {
+    public ElevatorView? elevatorview { get; set; }
+
+    public List<ElevatorView> elevators { get; set; } = new List<ElevatorView>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    public async Task LoadData()
+    {
+        elevators = JsonConvert.DeserializeObject<List<ElevatorView>>(await apiService.GetAsync("Elevator/GetElevators", null))!;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await Timer_LoadDataAsync();
+        }
+    }
+    private async Task Timer_LoadDataAsync()
+    {
+        while (true)
+        {
+            await Task.Delay(10000);
+            await LoadData();
+            StateHasChanged();
+        }
+    }
+
+    public void RedirectToIndex() => navManager.NavigateTo($"/");
+}
