@@ -3,6 +3,7 @@
 @using OtisTechMobileApp.Models.ViewModels.Errands;
 @using AutoMapper;
 @inject IApiService apiService;
+@inject NavigationManager navManager;
 @page "/Errand/{ErrandId}"
 @page "/Errand/"
 
@@ -31,7 +32,7 @@
 
 <MudButton>Update/Save with Comment</MudButton>
 
-<MudButton>Go back to list</MudButton>
+<MudButton OnClick="GoBack">Go back to list</MudButton>
 
 
 @code {
@@ -65,6 +66,8 @@
 
         errand.Add(errandOne);
     }
+    
+    public void GoBack() => navManager.NavigateTo($"/");
     
     //public async Task SaveErrand()
     //{
