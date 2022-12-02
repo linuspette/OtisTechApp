@@ -5,6 +5,7 @@
 @using OtisTechMobileApp.Models.ViewModels.Users;
 @inject IApiService apiService;
 @inject NavigationManager navManager;
+@inject IDialogService dialogService;
 @page "/Errand/{ErrandId}"
 @page "/Errand/"
 
@@ -107,7 +108,8 @@
         var jsonUpdate = JsonConvert.SerializeObject(errandUpdateInput);
 
         await apiService.PostAsync("Errands/updateerrand", jsonUpdate);
-        GoBack();
+
+        
     }
 
 }

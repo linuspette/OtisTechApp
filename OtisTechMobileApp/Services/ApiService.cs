@@ -50,7 +50,18 @@ namespace OtisTechMobileApp.Services
         {
             try
             {
-                var result = await _httpClient.PostAsJsonAsync(baseAdress + route, JsonConvert.SerializeObject(data));
+                //var result = await _httpClient.PostAsJsonAsync(baseAdress + route, JsonConvert.SerializeObject(data));
+
+                
+                
+                var request = new HttpRequestMessage(HttpMethod.Post, new Uri($"{baseAdress}{route}"))
+                {
+                    Content = new StringContent(data, Encoding.UTF8, "application/json")
+                };
+               
+
+
+                var result = await _httpClient.SendAsync(request);
 
                 return await result.Content.ReadAsStringAsync();
             }
