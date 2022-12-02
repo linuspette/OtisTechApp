@@ -6,6 +6,7 @@
 @inject IApiService apiService;
 @inject NavigationManager navManager;
 @inject IDialogService dialogService;
+@inject ISnackbar Snackbar;
 @page "/Errand/{ErrandId}"
 @page "/Errand/"
 
@@ -48,7 +49,7 @@
 
 
 
-<MudButton OnClick="SaveErrand">Update Errand</MudButton>
+<MudButton OnClick="SaveErrand" Variant="Variant.Filled" Color="Color.Info">Update Errand</MudButton>
 
 <MudButton OnClick="GoBack">Go back to list</MudButton>
 
@@ -98,18 +99,24 @@
 
     public async Task SaveErrand()
     {
+        try
+        {
+            errandUpdateInput.ErrandNumber = errandOne.ErrandNumber;
+            errandUpdateInput.IsResolved = isResolved;
+            errandUpdateInput.Status = statustext!;
+            errandUpdateInput.Message = comment!;
+            errandUpdateInput.EmployeeIds = assignedTechs;
 
-        errandUpdateInput.ErrandNumber = errandOne.ErrandNumber;
-        errandUpdateInput.IsResolved = isResolved;
-        errandUpdateInput.Status = statustext!;
-        errandUpdateInput.Message = comment!;
-        errandUpdateInput.EmployeeIds = assignedTechs;
+            var jsonUpdate = JsonConvert.SerializeObject(errandUpdateInput);
 
-        var jsonUpdate = JsonConvert.SerializeObject(errandUpdateInput);
+            await apiService.PostAsync("Errands/updateerrand", jsonUpdate);
+            Snackbar.Add("Errand updated! ", Severity.Info);
+        }
+        catch
+        {
+            Snackbar.Add("Couldn't update errand ", Severity.Error);
+        }
 
-        await apiService.PostAsync("Errands/updateerrand", jsonUpdate);
-
-        
     }
 
 }
