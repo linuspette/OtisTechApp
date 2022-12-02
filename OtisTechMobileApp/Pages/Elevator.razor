@@ -39,7 +39,7 @@
 
     public async Task LoadData()
     {
-        elevators = JsonConvert.DeserializeObject<List<ElevatorView>>(await apiService.GetAsync("Elevator/GetElevators", null))!;
+        elevators = JsonConvert.DeserializeObject<List<ElevatorView>>(await apiService.GetAsync("Elevators/getelevators", null))!;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

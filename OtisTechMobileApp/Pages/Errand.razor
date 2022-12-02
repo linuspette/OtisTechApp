@@ -7,7 +7,7 @@
 @page "/Errand/{ErrandId}"
 @page "/Errand/"
 
-<h3>Errand</h3>
+<h1>Errand</h1>
 
 <MudTable T="ErrandView" Items="errand">
     <HeaderContent>
@@ -22,10 +22,25 @@
 
     </RowTemplate>
 
-
 </MudTable>
+
+<MudTable T="ErrandUpdateView" Items="updatesList">
+    <HeaderContent>
+        <MudTh>Date</MudTh>
+        <MudTh>Status</MudTh>
+        <MudTh>Message</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Date">@context.DateOfUpdate</MudTd>
+        <MudTd DataLabel="Status">@context.Status</MudTd>
+        <MudTd DataLabel="Message">@context.Message</MudTd>
+
+    </RowTemplate>
+</MudTable>
+
 <MudSwitch Label="Errand resolved" @bind-Checked="@isResolved" Color="Color.Primary" />
 
+<h2>Add comment</h2>
 <MudTextField @bind-Value="comment" Variant="Variant.Outlined"></MudTextField>
 
 
@@ -38,7 +53,7 @@
 @code {
     public List<ErrandView> errand { get; set; } = new List<ErrandView>();
 
-
+    public List<ErrandUpdateView> updatesList { get; set; } = new();
 
     public ErrandView errandOne { get; set; } = new ErrandView();
 
@@ -64,6 +79,7 @@
         //var mapper = config.CreateMapper();
         //var mappedInput = mapper.Map<ErrandView>(errandInput);
 
+        updatesList = errandOne.ErrandUpdates;
 
         errand.Add(errandOne);
     }

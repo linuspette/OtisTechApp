@@ -29,6 +29,8 @@
 </MudTable>
 
 <MudButton OnClick="LoadData">Load data if not loaded</MudButton>
+<MudButton OnClick="RedirectToElevators">Show all elevators</MudButton>
+
 
 @code{
 
@@ -65,4 +67,6 @@
     }
 
     public void RedirectToErrand(string Id) => navManager.NavigateTo($"/Errand/{Id}");
+
+    public void RedirectToElevators() => navManager.NavigateTo($"/Elevator");
 }
