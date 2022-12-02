@@ -1,8 +1,8 @@
 ﻿@using Newtonsoft.Json;
 @using OtisTechMobileApp.Models.InputModels;
 @using OtisTechMobileApp.Models.ViewModels.Errands;
-@using AutoMapper;
 @using OtisTechMobileApp.Models.ViewModels.Users;
+@inject IUpdateData updateData;
 @inject IApiService apiService;
 @inject NavigationManager navManager;
 @inject IDialogService dialogService;
@@ -78,15 +78,11 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var jsonObject = await apiService.GetAsync($"Errands/GetErrand", new Dictionary<string, string> { { "errandNumber", ErrandId! } });
 
-        errandOne = JsonConvert.DeserializeObject<ErrandView>(jsonObject) ?? null!;
 
-        //var config = new MapperConfiguration(cfg => cfg.CreateMap<ErrandView, ErrandInputModel>().ReverseMap());
-        //var mapper = config.CreateMapper();
-        //var mappedInput = mapper.Map<ErrandView>(errandInput);
+        errandOne = await updateData.UpdateErrandData(ErrandId!);
 
-        updatesList = errandOne.ErrandUpdates;
+        updatesList = errandOne.ErrandUpdates.OrderBy(x => x.DateOfUpdate).ToList();
         foreach(var item in errandOne.AssignedTechnicians)
         {
             assignedTechs.Add(item.EmployeeNumber);
@@ -111,6 +107,7 @@
 
             await apiService.PostAsync("Errands/updateerrand", jsonUpdate);
             Snackbar.Add("Errand updated! ", Severity.Info);
+            StateHasChanged();
         }
         catch
         {
