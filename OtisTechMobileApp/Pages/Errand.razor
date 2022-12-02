@@ -2,6 +2,7 @@
 @using OtisTechMobileApp.Models.InputModels;
 @using OtisTechMobileApp.Models.ViewModels.Errands;
 @using AutoMapper;
+@using OtisTechMobileApp.Models.ViewModels.Users;
 @inject IApiService apiService;
 @inject NavigationManager navManager;
 @page "/Errand/{ErrandId}"
@@ -39,8 +40,9 @@
 </MudTable>
 
 <MudSwitch Label="Errand resolved" @bind-Checked="@isResolved" Color="Color.Primary" />
-
-<h2>Add comment</h2>
+<h2>Status of errand:</h2>
+<MudTextField @bind-Value="statustext" Variant="Variant.Outlined"></MudTextField>
+<h2>Add comment:</h2>
 <MudTextField @bind-Value="comment" Variant="Variant.Outlined"></MudTextField>
 
 
@@ -57,7 +59,9 @@
 
     public ErrandView errandOne { get; set; } = new ErrandView();
 
-    public ErrandInputModel errandInput { get; set; }
+    public List<int> assignedTechs { get; set; } = new();
+
+    public ErrandInputModel errandInput { get; set; } = new();
 
     public ErrandUpdateInputModel errandUpdateInput { get; set; } = new();
 
@@ -68,6 +72,7 @@
     public string? ErrandId { get; set; }
 
     public string? comment { get; set; }
+    public string? statustext { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -80,7 +85,11 @@
         //var mappedInput = mapper.Map<ErrandView>(errandInput);
 
         updatesList = errandOne.ErrandUpdates;
-
+        foreach(var item in errandOne.AssignedTechnicians)
+        {
+            assignedTechs.Add(item.EmployeeNumber);
+        }
+        isResolved = errandOne.IsResolved;
         errand.Add(errandOne);
     }
 
@@ -91,11 +100,14 @@
 
         errandUpdateInput.ErrandNumber = errandOne.ErrandNumber;
         errandUpdateInput.IsResolved = isResolved;
-        errandUpdateInput.Message = comment;      
+        errandUpdateInput.Status = statustext!;
+        errandUpdateInput.Message = comment!;
+        errandUpdateInput.EmployeeIds = assignedTechs;
 
         var jsonUpdate = JsonConvert.SerializeObject(errandUpdateInput);
 
         await apiService.PostAsync("Errands/updateerrand", jsonUpdate);
+        GoBack();
     }
 
 }
