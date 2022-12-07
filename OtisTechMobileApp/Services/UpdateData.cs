@@ -17,7 +17,8 @@ namespace OtisTechMobileApp.Services
         {
             var jsonObject = await apiService.GetAsync($"Errands/GetErrand",  new Dictionary<string, string> { { "errandNumber", errandId! } });
 
-            ErrandView errandOne = JsonConvert.DeserializeObject<ErrandView>(jsonObject) ?? null!;
+            ErrandView errandOne = new();
+            errandOne = JsonConvert.DeserializeObject<ErrandView>(jsonObject) ?? null!;
 
 
             return errandOne;

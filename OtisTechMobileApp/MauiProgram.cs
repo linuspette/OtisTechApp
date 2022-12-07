@@ -17,6 +17,7 @@ namespace OtisTechMobileApp
                 });
 
             builder.Services.AddScoped<IApiService, ApiService>();
+            builder.Services.AddScoped<IUpdateData, UpdateData>();
 
             builder.Services.AddMauiBlazorWebView();
 #if DEBUG
