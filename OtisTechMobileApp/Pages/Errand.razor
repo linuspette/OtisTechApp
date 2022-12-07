@@ -1,0 +1,119 @@
+﻿@using Newtonsoft.Json;
+@using OtisTechMobileApp.Models.InputModels;
+@using OtisTechMobileApp.Models.ViewModels.Errands;
+@using OtisTechMobileApp.Models.ViewModels.Users;
+@inject IUpdateData updateData;
+@inject IApiService apiService;
+@inject NavigationManager navManager;
+@inject IDialogService dialogService;
+@inject ISnackbar Snackbar;
+@page "/Errand/{ErrandId}"
+@page "/Errand"
+
+<h1>Errand</h1>
+
+<MudTable T="ErrandView" Items="errand">
+    <HeaderContent>
+        <MudTh>Errand Number</MudTh>
+        <MudTh>Elavator Id</MudTh>
+        <MudTh>Is Resolved</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Errand Number">@context.ErrandNumber</MudTd>
+        <MudTd DataLabel="Elevator Id">@context.Elevator.Id</MudTd>
+        <MudTd DataLabel="Is Resolved">@context.IsResolved</MudTd>
+
+    </RowTemplate>
+
+</MudTable>
+
+<MudTable T="ErrandUpdateView" Items="updatesList">
+    <HeaderContent>
+        <MudTh>Date</MudTh>
+        <MudTh>Status</MudTh>
+        <MudTh>Message</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Date">@context.DateOfUpdate</MudTd>
+        <MudTd DataLabel="Status">@context.Status</MudTd>
+        <MudTd DataLabel="Message">@context.Message</MudTd>
+
+    </RowTemplate>
+</MudTable>
+
+<MudSwitch Label="Errand resolved" @bind-Checked="@isResolved" Color="Color.Primary" />
+<h2>Status of errand:</h2>
+<MudTextField @bind-Value="statustext" Variant="Variant.Outlined"></MudTextField>
+<h2>Add comment:</h2>
+<MudTextField @bind-Value="comment" Variant="Variant.Outlined"></MudTextField>
+
+
+
+<MudButton OnClick="SaveErrand" Variant="Variant.Filled" Color="Color.Info">Update Errand</MudButton>
+
+<MudButton OnClick="GoBack">Go back to list</MudButton>
+
+
+@code {
+    public List<ErrandView> errand { get; set; } = new List<ErrandView>();
+
+    public List<ErrandUpdateView> updatesList { get; set; } = new();
+
+    public ErrandView errandOne { get; set; } = new ErrandView();
+
+    public List<int> assignedTechs { get; set; } = new();
+
+    public ErrandInputModel errandInput { get; set; } = new();
+
+    public ErrandUpdateInputModel errandUpdateInput { get; set; } = new();
+
+    public bool isResolved { get; set; }
+
+
+    [Parameter]
+    public string? ErrandId { get; set; }
+
+    public string? comment { get; set; }
+    public string? statustext { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+
+        errandOne = await updateData.UpdateErrandData(ErrandId!);
+
+        updatesList = errandOne.ErrandUpdates.OrderBy(x => x.DateOfUpdate).ToList();
+        foreach(var item in errandOne.AssignedTechnicians)
+        {
+            assignedTechs.Add(item.EmployeeNumber);
+        }
+        isResolved = errandOne.IsResolved;
+        errand.Add(errandOne);
+    }
+
+    public void GoBack() => navManager.NavigateTo($"/");
+
+    public async Task SaveErrand()
+    {
+        try
+        {
+            errandUpdateInput.ErrandNumber = errandOne.ErrandNumber;
+            errandUpdateInput.IsResolved = isResolved;
+            errandUpdateInput.Status = statustext!;
+            errandUpdateInput.Message = comment!;
+            errandUpdateInput.EmployeeIds = assignedTechs;
+
+            var jsonUpdate = JsonConvert.SerializeObject(errandUpdateInput);
+
+            await apiService.PostAsync("Errands/updateerrand", jsonUpdate);
+            Snackbar.Add("Errand updated! ", Severity.Info);
+            StateHasChanged();
+        }
+        catch
+        {
+            Snackbar.Add("Couldn't update errand ", Severity.Error);
+        }
+
+    }
+
+}
